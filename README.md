@@ -1,4 +1,4 @@
-# We are supposed to have our drink here
+# We are supposed to have our drink menu here
 
 :beer:
 :tropical_drink:

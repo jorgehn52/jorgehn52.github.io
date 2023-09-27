@@ -1,8 +1,11 @@
 
-# We are supposed to have our drink menu here
+# Menu
 
-🍺 Blue Moon / Czechvar
-🍸 Martini (out of stock)
-🍹 Paperplane
-🍷 Wine (out of stock)
+🍺  Blue Moon / Czechvar
+🍸  Martini (out of stock)
+🍹  Paperplane
+🍷  Wine (out of stock)
+    Water
+⚫🔴 Coke
+☕   Coffee   
 

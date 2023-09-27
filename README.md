@@ -2,7 +2,7 @@
 # Menu
 
 🍺  Blue Moon / Czechvar <br />
-🍸  Martini (out of stock) <br />
+🍸  Margarita <br />
 🍹  Paperplane <br />
 🍷  Wine (out of stock) <br />
 🍶  Water <br />

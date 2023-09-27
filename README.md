@@ -1,7 +1,8 @@
+
 # We are supposed to have our drink menu here
 
-:beer:
-:tropical_drink:
-:wine_glass:
-:beers:
-:cocktail:
+🍺 Blue Moon / Czechvar
+🍸 Martini (out of stock)
+🍹 Paperplane
+🍷 Wine (out of stock)
+

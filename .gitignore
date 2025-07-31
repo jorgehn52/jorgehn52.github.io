@@ -1,0 +1,67 @@
+# OS-specific files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Editor and IDE files
+.vscode/
+
+# Environment variables and secrets
+.env
+.env.*
+*.secret
+*.secrets.*
+*.key
+*.pem
+
+# Logs and temp files
+*.log
+*.tmp
+*.bak
+*.backup
+
+# Docker
+*.tar
+.dockerignore
+docker-compose.override.yml
+**/.docker/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+
+# Kubernetes
+.kube/
+*.kubeconfig
+
+# AWS CLI and credentials
+.aws/
+*.pem
+*.crt
+*.csr
+
+# VS Code settings sync
+.code-workspace
+
+# JetBrains (IntelliJ, PyCharm, WebStorm, etc.)
+*.iml
+*.ipr
+*.iws
+out/
+.idea/
+
+# Archives and compressed files
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
+# System generated folders
+__MACOSX/
+
+# SOPS (ignore decrypted outputs)
+*.decrypted.*

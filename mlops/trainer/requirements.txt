@@ -1,0 +1,4 @@
+torch
+mlflow
+prefect
+scikit-learn

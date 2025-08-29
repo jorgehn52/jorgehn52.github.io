@@ -1,0 +1,81 @@
+version: "3.9"
+
+services:
+  # ------------------------------
+  # MLflow Tracking Server + DB
+  # ------------------------------
+  mlflow-db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: mlflow
+      POSTGRES_PASSWORD: mlflow
+      POSTGRES_DB: mlflow
+    volumes:
+      - mlflow_db:/var/lib/postgresql/data
+
+  mlflow:
+    build:
+      context: ./mlflow
+    environment:
+      BACKEND_STORE_URI: postgresql://mlflow:mlflow@mlflow-db:5432/mlflow
+      ARTIFACT_ROOT: /mlflow/artifacts
+    volumes:
+      - ./mlruns:/mlflow/artifacts
+    ports:
+      - "5500:5000"
+    depends_on:
+      - mlflow-db
+
+  # ------------------------------
+  # Prefect Orion (Workflow Orchestration)
+  # ------------------------------
+  prefect:
+    image: prefecthq/prefect:2-latest
+    ports:
+      - "4200:4200"
+    command: prefect orion start --host 0.0.0.0
+
+  # ------------------------------
+  # Training Container (PyTorch)
+  # ------------------------------
+  trainer:
+    build:
+      context: ./trainer
+      dockerfile: Dockerfile
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow:5005
+    volumes:
+      - ./trainer:/app
+    depends_on:
+      - mlflow
+    command: python train.py
+
+  # ------------------------------
+  # FastAPI Model Serving
+  # ------------------------------
+  fastapi:
+    build:
+      context: ./fastapi
+      dockerfile: Dockerfile
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow:5005
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mlflow
+
+  # ------------------------------
+  # Evidently (Data/Drift Monitoring)
+  # ------------------------------
+  evidently:
+    build:
+      context: ./evidently
+      dockerfile: Dockerfile
+    volumes:
+      - ./evidently:/app
+    command: python evidently.py
+    depends_on:
+      - mlflow
+
+volumes:
+  mlflow_db:

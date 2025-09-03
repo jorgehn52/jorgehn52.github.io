@@ -3,3 +3,4 @@ uvicorn
 mlflow
 torch
 scikit-learn
+boto3

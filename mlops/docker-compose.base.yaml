@@ -81,19 +81,22 @@ services:
   # ------------------------------
   # FastAPI Model Serving
   # ------------------------------
-  # fastapi:
-  #   build:
-  #     context: ./fastapi
-  #     dockerfile: Dockerfile
-  #   platform: linux/amd64
-  #   environment:
-  #     MLFLOW_TRACKING_URI: http://mlflow:5000
-  #   volumes:
-  #     - ./mlruns:/mlflow/artifacts
-  #   ports:
-  #     - "8000:8000"
-  #   depends_on:
-  #     - mlflow
+  fastapi:
+    build:
+      context: ./fastapi
+      dockerfile: Dockerfile
+    platform: linux/amd64
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      MLFLOW_S3_ENDPOINT_URL: http://minio:9000
+      AWS_ACCESS_KEY_ID: minio_user
+      AWS_SECRET_ACCESS_KEY: minio_password
+    volumes:
+      - ./mlruns:/mlflow/artifacts
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mlflow
 
 volumes:
   mlflow_db:

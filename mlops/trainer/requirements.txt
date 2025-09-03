@@ -1,4 +1,4 @@
 torch
 mlflow
-prefect
 scikit-learn
+boto3

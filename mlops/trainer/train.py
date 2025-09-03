@@ -1,35 +1,29 @@
-import mlflow
-import mlflow.pytorch
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from sklearn.datasets import make_classification
-from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader, TensorDataset
+import mlflow
+import mlflow.pytorch
 
 # ------------------------
-# Prepare dummy dataset
+# Dummy dataset
 # ------------------------
-X, y = make_classification(n_samples=1000, n_features=20, n_classes=2, random_state=42)
-X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
-train_dataset = TensorDataset(torch.tensor(X_train, dtype=torch.float32),
-                              torch.tensor(y_train, dtype=torch.long))
-train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+X = torch.randn(500, 20)
+y = torch.randint(0, 2, (500,))
+
+dataset = TensorDataset(X, y)
+train_loader = DataLoader(dataset, batch_size=32, shuffle=True)
 
 # ------------------------
-# Define simple model
+# Simple model
 # ------------------------
 class SimpleModel(nn.Module):
-    def __init__(self, input_dim=20, hidden_dim=32, output_dim=2):
+    def __init__(self):
         super().__init__()
-        self.net = nn.Sequential(
-            nn.Linear(input_dim, hidden_dim),
-            nn.ReLU(),
-            nn.Linear(hidden_dim, output_dim)
-        )
+        self.fc = nn.Linear(20, 2)
 
     def forward(self, x):
-        return self.net(x)
+        return self.fc(x)
 
 model = SimpleModel()
 criterion = nn.CrossEntropyLoss()
@@ -41,7 +35,7 @@ optimizer = optim.Adam(model.parameters(), lr=0.001)
 mlflow.set_tracking_uri("http://mlflow:5000")
 mlflow.set_experiment("demo_mlops")
 
-with mlflow.start_run():
+with mlflow.start_run() as run:
     for epoch in range(5):
         total_loss = 0
         for xb, yb in train_loader:
@@ -51,8 +45,17 @@ with mlflow.start_run():
             loss.backward()
             optimizer.step()
             total_loss += loss.item()
-        print(f"Epoch {epoch+1} - loss: {total_loss/len(train_loader):.4f}")
-        mlflow.log_metric("loss", total_loss/len(train_loader), step=epoch)
+        avg_loss = total_loss / len(train_loader)
+        print(f"Epoch {epoch+1} - loss: {avg_loss:.4f}")
+        mlflow.log_metric("loss", avg_loss, step=epoch)
 
-    # Log model
-    mlflow.pytorch.log_model(model, "model")
+    # ------------------------
+    # Log and register model
+    # ------------------------
+    try:
+        mlflow.pytorch.log_model(model, artifact_path="model")
+        model_uri = f"runs:/{run.info.run_id}/model"
+        result = mlflow.register_model(model_uri, "demo_mlops")
+        print(f"✅ Model logged and registered as 'demo_mlops' version {result.version}")
+    except Exception as e:
+        print("Error logging model:", e)
